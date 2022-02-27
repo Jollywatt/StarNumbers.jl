@@ -10,7 +10,7 @@ struct StarNumber{n} <: Number
 	end
 end
 
-Base.show(io::IO, a::StarNumber) = print(io, "-"^a.sign, a.coeff)
+Base.show(io::IO, a::StarNumber) = print(io, "-"^(iszero(a.coeff) ? 0 : a.sign), a.coeff)
 
 Base.show(io::IO, ::MIME"text/plain", a::StarNumber) = print(io, typeof(a), ": ", a)
 
@@ -40,9 +40,6 @@ function Base.:+(a::StarNumber{n}, b::StarNumber{n}) where n
 end
 Base.:-(a::StarNumber{n}) where n = StarNumber{n}(a.sign + 1, a.coeff)
 Base.:-(a::StarNumber, b::StarNumber) = a + (-b)
-
-
-
 
 
 end # module
