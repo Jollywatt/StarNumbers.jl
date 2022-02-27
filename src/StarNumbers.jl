@@ -1,13 +1,12 @@
 module StarNumbers
 
 using SymPy
-# import_from(sympy, (:Mod,))
+export StarNumber
+
 # simplify doesn't reduce mod expressions as much as this does
 harshsimplify(a) = simplify(simplify(a + 1) - 1)
 _mod(a::Real, b::Real) = mod(a, b)
 _mod(a, b) = sympy.Mod(a, b)
-
-export StarNumber
 
 struct StarNumber{n} <: Number
 	sign
@@ -40,17 +39,18 @@ Base.:^(a::StarNumber{n}, p::Integer) where n = StarNumber{n}(p*a.sign, a.coeff^
 ## Addition, subtraction
 
 function Base.:+(a::StarNumber{n}, b::StarNumber{n}) where n
-	if a.sign == b.sign
-		sign = a.sign
-		coeff = a.coeff + b.coeff
+	if sign(a) == sign(b)
+		sign = sign(a)
+		coeff = abs(a) + abs(b)
 	else
-		# dom, sub = Gt(a.coeff, b.coeff) ? (a, b) : (b, a)
-		sign = sympy.Piecewise((a.sign, Gt(a.coeff, b.coeff)), (b.sign, true))
-		coeff = abs(a.coeff - b.coeff)
+		sign = sympy.Piecewise(
+			(sign(a), Gt(abs(a), abs(b))),
+			(sign(b), true))
+		coeff = abs(abs(a) - abs(b))
 	end
 	StarNumber{n}(sign, coeff)
 end
-Base.:-(a::StarNumber{n}) where n = StarNumber{n}(a.sign + 1, a.coeff)
+Base.:-(a::StarNumber{n}) where n = StarNumber{n}(sign(a) + 1, abs(a))
 Base.:-(a::StarNumber, b::StarNumber) = a + (-b)
 
 
@@ -62,7 +62,7 @@ function Base.show(io::IO, a::StarNumber)
 		print(io, typeof(a), ": ", "-"^sign(a), abs(a))
 	else
 		# use full notation (eg `StarNumber{3}(2, 7)`) for all other types, incl. symbolic
-		head = sympy.Function(repr(typeof(a))) # dummy function for printing
+		head = sympy.Function(repr(typeof(a))) # dummy function for printing type name
 		print(io, sympy.pretty(head(sign(a), abs(a)))) # use sympy's pretty printing
 	end
 end

@@ -81,3 +81,39 @@ julia> 1 - ans
 StarNumber{7}⎜⎨                        , │x - 1│⎟
              ⎝⎩(k + 1) mod 7  otherwise         ⎠
 ```
+
+***Verifying distributivity***
+
+```julia
+julia> A, B, C = [StarNumber{5}(sign, coeff) for (sign, coeff) in zip(
+           symbols("x y z", integer=true),
+           symbols("a b c", positive=true),
+       )]
+3-element Vector{StarNumber{5}}:
+ StarNumber{5}(x mod 5, a)
+ StarNumber{5}(y mod 5, b)
+ StarNumber{5}(z mod 5, c)
+
+julia> A*(B + C)
+             ⎛⎧(x + y) mod 5  for b > c           ⎞
+StarNumber{5}⎜⎨                        , a⋅│b - c│⎟
+             ⎝⎩(x + z) mod 5  otherwise           ⎠
+
+julia> A*B + A*C
+             ⎛⎧(x + y) mod 5  for a⋅b > a⋅c           ⎞
+StarNumber{5}⎜⎨                            , a⋅│b - c│⎟
+             ⎝⎩(x + z) mod 5    otherwise             ⎠
+
+```
+
+***Verifying inverses***
+
+```julia
+julia> 1/A
+             ⎛           1⎞
+StarNumber{5}⎜4⋅x mod 5, ─⎟
+             ⎝           a⎠
+
+julia> ans*A
+StarNumber{5}: 1
+```
