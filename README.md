@@ -36,6 +36,6 @@ StarNumber{3}: 1
 julia> -4i + 3i
 StarNumber{3}: -1
 
-julia> -(-i) + 4(-i)
-StarNumber{3}: -3
+julia> -4(-i) + 3i
+StarNumber{3}: --1
 ```
