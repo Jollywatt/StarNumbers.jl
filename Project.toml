@@ -2,3 +2,6 @@ name = "StarNumbers"
 uuid = "698c6ea9-e90e-42ea-a7e7-ef0bb5930cff"
 authors = ["jollywatt <jo.alex.w@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+SymPy = "24249f21-da20-56a4-8eb1-6a02cf4ae2e6"
